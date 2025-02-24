@@ -61,9 +61,9 @@ const navigationItems = [
   { icon: FiHome, title: 'Overview', path: '/dashboard', roles: ['manager', 'cashier'] },
   { icon: FiShoppingCart, title: 'New Sale', path: '/dashboard/new-sale', roles: ['manager', 'cashier'] },
   { icon: FiUsers, title: 'Customer Management', path: '/dashboard/customers', roles: ['manager', 'cashier'] },
+  { icon: FiClock, title: "Today's Sales", path: '/dashboard/todays-sales', roles: ['manager', 'cashier'] },
   { icon: FiPackage, title: 'Inventory Management', path: '/dashboard/inventory', roles: ['manager'] },
   { icon: FiDollarSign, title: 'Sales History', path: '/dashboard/sales-history', roles: ['manager'] },
-  { icon: FiClock, title: "Today's Sales", path: '/dashboard/todays-sales', roles: ['manager', 'cashier'] },
   { icon: FiBarChart2, title: 'Analytics', path: '/dashboard/analytics', roles: ['manager'] },
   { icon: FiUsers, title: 'User Management', path: '/dashboard/users', roles: ['manager'] }
 ];

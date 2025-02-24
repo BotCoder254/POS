@@ -64,9 +64,9 @@ export default function App() {
           <Route index element={<Dashboard />} />
           <Route path="new-sale" element={<NewSale />} />
           <Route path="customers" element={<CustomerManagement />} />
+          <Route path="todays-sales" element={<TodaysSales />} />
           <Route path="inventory" element={<PrivateRoute roles={['manager']}><InventoryManagement /></PrivateRoute>} />
           <Route path="sales-history" element={<PrivateRoute roles={['manager']}><SalesHistory /></PrivateRoute>} />
-          <Route path="todays-sales" element={<TodaysSales />} />
           <Route path="analytics" element={<PrivateRoute roles={['manager']}><Analytics /></PrivateRoute>} />
           <Route path="users" element={<PrivateRoute roles={['manager']}><UserManagement /></PrivateRoute>} />
         </Route>

@@ -47,8 +47,14 @@ export default function CashierDashboard() {
   const { salesData: todaysSales } = useDailySales();
 
   const totalSales = todaysSales?.length || 0;
-  const totalRevenue = todaysSales?.reduce((sum, sale) => sum + (sale.total || 0), 0) || 0;
-  const totalItems = todaysSales?.reduce((sum, sale) => sum + (sale.items?.length || 0), 0) || 0;
+  const totalRevenue = todaysSales?.reduce((sum, sale) => {
+    const saleTotal = typeof sale.total === 'number' ? sale.total : parseFloat(sale.total) || 0;
+    return sum + saleTotal;
+  }, 0) || 0;
+  const totalItems = todaysSales?.reduce((sum, sale) => {
+    const itemCount = sale.items?.length || 0;
+    return sum + itemCount;
+  }, 0) || 0;
 
   const quickActions = [
     {
@@ -66,7 +72,7 @@ export default function CashierDashboard() {
     {
       icon: FiClock,
       title: "Today's Sales",
-      description: 'View today\'s transactions',
+      description: "View today's transactions",
       to: '/dashboard/todays-sales'
     },
     {
@@ -141,7 +147,7 @@ export default function CashierDashboard() {
                   </p>
                 </div>
                 <div className="text-right">
-                  <p className="font-medium">${transaction.total?.toFixed(2) || '0.00'}</p>
+                  <p className="font-medium">${typeof transaction.total === 'number' ? transaction.total.toFixed(2) : (parseFloat(transaction.total) || 0).toFixed(2)}</p>
                   <p className="text-sm text-gray-500">
                     {transaction.items?.length || 0} items
                   </p>
