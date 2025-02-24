@@ -43,7 +43,22 @@ export function AuthProvider({ children }) {
   async function login(email, password) {
     try {
       const result = await signInWithEmailAndPassword(auth, email, password);
-      const role = await getUserRole(result.user.uid);
+      const userDoc = await getDoc(doc(db, 'users', result.user.uid));
+      let role = 'cashier';
+      
+      if (userDoc.exists()) {
+        role = userDoc.data().role || 'cashier';
+      } else {
+        // Create user document if it doesn't exist
+        await setDoc(doc(db, 'users', result.user.uid), {
+          email: result.user.email,
+          role: 'cashier',
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+          status: 'active'
+        });
+      }
+      
       setUserRole(role);
       return result.user;
     } catch (error) {
@@ -55,7 +70,22 @@ export function AuthProvider({ children }) {
   async function signInWithGoogleProvider() {
     try {
       const result = await signInWithPopup(auth, googleProvider);
-      const role = await getUserRole(result.user.uid);
+      const userDoc = await getDoc(doc(db, 'users', result.user.uid));
+      let role = 'cashier';
+      
+      if (userDoc.exists()) {
+        role = userDoc.data().role || 'cashier';
+      } else {
+        // Create user document if it doesn't exist
+        await setDoc(doc(db, 'users', result.user.uid), {
+          email: result.user.email,
+          role: 'cashier',
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+          status: 'active'
+        });
+      }
+      
       setUserRole(role);
       return result.user;
     } catch (error) {
@@ -79,9 +109,10 @@ export function AuthProvider({ children }) {
     try {
       const userDoc = await getDoc(doc(db, 'users', uid));
       if (userDoc.exists()) {
-        return userDoc.data().role;
+        const userData = userDoc.data();
+        return userData.role || 'cashier'; // Return role if exists, otherwise default to cashier
       }
-      return 'cashier'; // Default role
+      return 'cashier'; // Default role if document doesn't exist
     } catch (error) {
       console.error('Error getting user role:', error);
       return 'cashier'; // Default role on error

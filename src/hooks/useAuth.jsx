@@ -19,9 +19,10 @@ export const useAuth = () => {
     try {
       const userDoc = await getDoc(doc(db, 'users', uid));
       if (userDoc.exists()) {
-        return userDoc.data().role;
+        const userData = userDoc.data();
+        return userData.role || 'cashier'; // Return role if exists, otherwise default to cashier
       }
-      return 'cashier'; // Default role
+      return 'cashier'; // Default role if document doesn't exist
     } catch (err) {
       console.error('Error getting user role:', err);
       return 'cashier'; // Default role on error

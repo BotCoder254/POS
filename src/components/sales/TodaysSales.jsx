@@ -25,8 +25,8 @@ export default function TodaysSales() {
   const calculateTotals = () => {
     return todaysTransactions.reduce((acc, t) => ({
       sales: acc.sales + 1,
-      revenue: acc.revenue + t.total,
-      items: acc.items + t.items.reduce((sum, item) => sum + item.quantity, 0)
+      revenue: acc.revenue + (typeof t.total === 'number' ? t.total : parseFloat(t.total) || 0),
+      items: acc.items + t.items.reduce((sum, item) => sum + (typeof item.quantity === 'number' ? item.quantity : parseInt(item.quantity) || 0), 0)
     }), { sales: 0, revenue: 0, items: 0 });
   };
 
@@ -132,7 +132,7 @@ export default function TodaysSales() {
                         {transaction.paymentMethod}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        ${transaction.total.toFixed(2)}
+                        ${typeof transaction.total === 'number' ? transaction.total.toFixed(2) : (parseFloat(transaction.total) || 0).toFixed(2)}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                         <div className="flex space-x-2">
@@ -182,28 +182,29 @@ export default function TodaysSales() {
                                   <span>
                                     {item.quantity}x {item.name}
                                   </span>
-                                  <span>${(item.price * item.quantity).toFixed(2)}</span>
+                                  <span>${((typeof item.price === 'number' ? item.price : parseFloat(item.price) || 0) * 
+                                          (typeof item.quantity === 'number' ? item.quantity : parseInt(item.quantity) || 0)).toFixed(2)}</span>
                                 </div>
                               ))}
                             </div>
                             <div className="mt-4 pt-4 border-t space-y-2">
                               <div className="flex justify-between text-sm">
                                 <span>Subtotal</span>
-                                <span>${transaction.subtotal.toFixed(2)}</span>
+                                <span>${typeof transaction.subtotal === 'number' ? transaction.subtotal.toFixed(2) : (parseFloat(transaction.subtotal) || 0).toFixed(2)}</span>
                               </div>
                               {transaction.discount > 0 && (
                                 <div className="flex justify-between text-sm text-green-600">
                                   <span>Discount ({transaction.discountPercent}%)</span>
-                                  <span>-${transaction.discount.toFixed(2)}</span>
+                                  <span>-${typeof transaction.discount === 'number' ? transaction.discount.toFixed(2) : (parseFloat(transaction.discount) || 0).toFixed(2)}</span>
                                 </div>
                               )}
                               <div className="flex justify-between text-sm">
                                 <span>Tax (10%)</span>
-                                <span>${transaction.tax.toFixed(2)}</span>
+                                <span>${typeof transaction.tax === 'number' ? transaction.tax.toFixed(2) : (parseFloat(transaction.tax) || 0).toFixed(2)}</span>
                               </div>
                               <div className="flex justify-between font-medium">
                                 <span>Total</span>
-                                <span>${transaction.total.toFixed(2)}</span>
+                                <span>${typeof transaction.total === 'number' ? transaction.total.toFixed(2) : (parseFloat(transaction.total) || 0).toFixed(2)}</span>
                               </div>
                             </div>
                           </div>

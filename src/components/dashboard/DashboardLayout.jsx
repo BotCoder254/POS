@@ -58,14 +58,14 @@ const Header = ({ onToggleSidebar }) => {
 
 // Navigation items array
 const navigationItems = [
-  { icon: FiHome, title: 'Overview', path: '/dashboard', roles: ['manager', 'cashier'] },
-  { icon: FiShoppingCart, title: 'New Sale', path: '/dashboard/new-sale', roles: ['manager', 'cashier'] },
-  { icon: FiUsers, title: 'Customer Management', path: '/dashboard/customers', roles: ['manager', 'cashier'] },
-  { icon: FiClock, title: "Today's Sales", path: '/dashboard/todays-sales', roles: ['manager', 'cashier'] },
-  { icon: FiPackage, title: 'Inventory Management', path: '/dashboard/inventory', roles: ['manager'] },
-  { icon: FiDollarSign, title: 'Sales History', path: '/dashboard/sales-history', roles: ['manager'] },
-  { icon: FiBarChart2, title: 'Analytics', path: '/dashboard/analytics', roles: ['manager'] },
-  { icon: FiUsers, title: 'User Management', path: '/dashboard/users', roles: ['manager'] }
+  { icon: FiHome, title: 'Overview', path: '/dashboard', roles: ['manager', 'cashier'], description: 'Dashboard overview' },
+  { icon: FiShoppingCart, title: 'New Sale', path: '/dashboard/new-sale', roles: ['manager', 'cashier'], description: 'Create a new sale' },
+  { icon: FiUsers, title: 'Customer Management', path: '/dashboard/customers', roles: ['manager', 'cashier'], description: 'Manage customers' },
+  { icon: FiClock, title: "Today's Sales", path: '/dashboard/todays-sales', roles: ['manager', 'cashier'], description: "View today's transactions" },
+  { icon: FiPackage, title: 'Inventory Management', path: '/dashboard/inventory', roles: ['manager'], description: 'Manage inventory' },
+  { icon: FiDollarSign, title: 'Sales History', path: '/dashboard/sales-history', roles: ['manager'], description: 'View sales history' },
+  { icon: FiBarChart2, title: 'Analytics', path: '/dashboard/analytics', roles: ['manager'], description: 'View analytics' },
+  { icon: FiUsers, title: 'User Management', path: '/dashboard/users', roles: ['manager'], description: 'Manage users' }
 ];
 
 export default function DashboardLayout() {
@@ -75,7 +75,10 @@ export default function DashboardLayout() {
   const location = useLocation();
 
   // Filter navigation items based on user role
-  const navItems = navigationItems.filter(item => item.roles.includes(userRole));
+  const navItems = navigationItems.filter(item => {
+    if (!userRole) return false;
+    return item.roles.includes(userRole.toLowerCase());
+  });
 
   const handleLogout = async () => {
     try {
@@ -93,6 +96,9 @@ export default function DashboardLayout() {
   if (!userRole) {
     return <div>Loading...</div>;
   }
+
+  console.log('Current user role:', userRole);
+  console.log('Available nav items:', navItems);
 
   return (
     <div className="flex h-screen bg-gray-100">
