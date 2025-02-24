@@ -60,6 +60,7 @@ export function AuthProvider({ children }) {
       }
       
       setUserRole(role);
+      setCurrentUser(result.user);
       return result.user;
     } catch (error) {
       console.error('Error logging in:', error);
@@ -87,6 +88,7 @@ export function AuthProvider({ children }) {
       }
       
       setUserRole(role);
+      setCurrentUser(result.user);
       return result.user;
     } catch (error) {
       console.error('Error signing in with Google:', error);
@@ -105,27 +107,28 @@ export function AuthProvider({ children }) {
     }
   }
 
-  async function getUserRole(uid) {
-    try {
-      const userDoc = await getDoc(doc(db, 'users', uid));
-      if (userDoc.exists()) {
-        const userData = userDoc.data();
-        return userData.role || 'cashier'; // Return role if exists, otherwise default to cashier
-      }
-      return 'cashier'; // Default role if document doesn't exist
-    } catch (error) {
-      console.error('Error getting user role:', error);
-      return 'cashier'; // Default role on error
-    }
-  }
-
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       try {
         if (user) {
-          const role = await getUserRole(user.uid);
+          const userDoc = await getDoc(doc(db, 'users', user.uid));
+          let role = 'cashier';
+          
+          if (userDoc.exists()) {
+            role = userDoc.data().role || 'cashier';
+          } else {
+            // Create user document if it doesn't exist
+            await setDoc(doc(db, 'users', user.uid), {
+              email: user.email,
+              role: 'cashier',
+              createdAt: new Date().toISOString(),
+              updatedAt: new Date().toISOString(),
+              status: 'active'
+            });
+          }
+          
           setCurrentUser(user);
-          setUserRole(role);
+          setUserRole(role.toLowerCase());
         } else {
           setCurrentUser(null);
           setUserRole(null);

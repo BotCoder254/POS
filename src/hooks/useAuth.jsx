@@ -15,25 +15,15 @@ export const useAuth = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const getUserRole = async (uid) => {
-    try {
-      const userDoc = await getDoc(doc(db, 'users', uid));
-      if (userDoc.exists()) {
-        const userData = userDoc.data();
-        return userData.role || 'cashier'; // Return role if exists, otherwise default to cashier
-      }
-      return 'cashier'; // Default role if document doesn't exist
-    } catch (err) {
-      console.error('Error getting user role:', err);
-      return 'cashier'; // Default role on error
-    }
-  };
-
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       try {
         if (currentUser) {
-          const role = await getUserRole(currentUser.uid);
+          const userDoc = await getDoc(doc(db, 'users', currentUser.uid));
+          let role = 'cashier';
+          if (userDoc.exists()) {
+            role = userDoc.data().role || 'cashier';
+          }
           setUser(currentUser);
           setUserRole(role);
         } else {
@@ -42,6 +32,8 @@ export const useAuth = () => {
         }
       } catch (err) {
         console.error('Error in auth state change:', err);
+        setUser(null);
+        setUserRole(null);
       } finally {
         setLoading(false);
       }
@@ -54,7 +46,14 @@ export const useAuth = () => {
     try {
       setError(null);
       const result = await signInWithEmailAndPassword(auth, email, password);
-      const role = await getUserRole(result.user.uid);
+      const userDoc = await getDoc(doc(db, 'users', result.user.uid));
+      let role = 'cashier';
+      
+      if (userDoc.exists()) {
+        role = userDoc.data().role || 'cashier';
+      }
+      
+      setUser(result.user);
       setUserRole(role);
       return result.user;
     } catch (err) {
@@ -67,7 +66,14 @@ export const useAuth = () => {
     try {
       setError(null);
       const result = await signInWithPopup(auth, googleProvider);
-      const role = await getUserRole(result.user.uid);
+      const userDoc = await getDoc(doc(db, 'users', result.user.uid));
+      let role = 'cashier';
+      
+      if (userDoc.exists()) {
+        role = userDoc.data().role || 'cashier';
+      }
+      
+      setUser(result.user);
       setUserRole(role);
       return result.user;
     } catch (err) {
